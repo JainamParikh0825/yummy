@@ -21,28 +21,33 @@ router.get("/seed", asyncHandler(async (req, res) => {
 
 
 router.post("/login", asyncHandler(async(req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
     
-    const encryptedPassword = await bcrypt.hash(password, 10);
-
-    const user = await UserModel.findOne({ email, password: encryptedPassword });
-
-    if (user) {
-        res.send(generateTokenResponse(user));
-    } else {
-        res.status(HTTP_BAD_REQUEST).send("Username or Password is not valid!");
-    }
+  const user = await UserModel.findOne({ email });
+  
+  if (!user) {
+    res.status(HTTP_BAD_REQUEST).send("Email is not registered!");
+    return;
+  }
+  const validPassword = await bcrypt.compare(password, user.password);
+  
+  if (validPassword) {
+      res.send(generateTokenResponse(user));
+  } else {
+      res.status(HTTP_BAD_REQUEST).send("Incorrect Password!");
+  }
 }));
 
 router.post("/register", asyncHandler(async (req, res) => {
   const { name, email, password, address } = req.body;
   const user = await UserModel.findOne({ email });
   if (user) {
-    res.status(HTTP_BAD_REQUEST).send('User is already exist. Please login.');
+    res.status(HTTP_BAD_REQUEST).send('User already exist. Please login.');
     return;
   }
 
-  const encryptedPassword = await bcrypt.hash(password, 10);
+  const salt = bcrypt.genSaltSync(10);
+  const encryptedPassword = bcrypt.hashSync(password, salt);
 
   const newUser: User = {
     id: "",
