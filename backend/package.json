@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cd src && nodemon server.ts"
+    "start": "cd src && nodemon server.ts",
+    "build": "npm install && tsc"
   },
   "keywords": [],
   "author": "",
@@ -20,10 +21,10 @@
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.5",
-    "typescript": "^4.8.4"
+    "typescript": "^4.8.4",
+    "@types/jsonwebtoken": "^8.5.9"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^8.5.9",
     "ts-node": "^10.9.1"
   }
 }
